@@ -60,13 +60,13 @@ Tools the AI agent can invoke, organised by implementation priority.
 
 Baseline capabilities every agentic coding tool needs.
 
-- [ ] **read** — Read file contents with optional line range (offset + limit)
-- [ ] **write** — Create or overwrite a file
-- [ ] **edit** — Targeted string replacement in an existing file (old → new)
-- [ ] **ls** — List files and directories at a path
-- [ ] **glob** — Find files by name/pattern (`**/*.ts`)
-- [ ] **grep** — Search file contents by regex (ripgrep-style)
-- [ ] **bash** — Execute shell commands (timeout, background mode, kill)
+- [x] **read** — Read file contents with optional line range (offset + limit)
+- [x] **write** — Create or overwrite a file
+- [x] **edit** — Targeted string replacement in an existing file (old → new)
+- [x] **ls** — List files and directories at a path
+- [x] **glob** — Find files by name/pattern (`**/*.ts`)
+- [x] **grep** — Search file contents by regex (ripgrep-style)
+- [x] **bash** — Execute shell commands (timeout, background mode, kill)
 
 ### Tier 2 — Essential UX
 
