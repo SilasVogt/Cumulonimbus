@@ -1,5 +1,12 @@
 import { ui, rgb } from "@rezi-ui/core";
 import { createNodeApp } from "@rezi-ui/node";
+import {
+  createDefaultRegistry,
+  executeToolCall,
+  type ToolCall,
+  type ToolResult,
+  type ToolRiskLevel,
+} from "./tools/index.js";
 
 // ── Colors ─────────────────────────────────────────────────────────────────────
 
@@ -170,6 +177,14 @@ interface ScheduledItem {
   timestamp: string;
 }
 
+interface ToolExecution {
+  id: string;
+  call: ToolCall;
+  riskLevel: ToolRiskLevel;
+  status: "pending" | "running" | "completed" | "denied";
+  result?: ToolResult;
+}
+
 interface AppState {
   selectedNode: string;
   expandedNodes: string[];
@@ -180,6 +195,9 @@ interface AppState {
   processes: ProcessItem[];
   todos: TodoItem[];
   scheduled: ScheduledItem[];
+  toolExecutions: ToolExecution[];
+  pendingApproval: ToolExecution | null;
+  sessionApprovedTools: Set<string>;
 }
 
 // ── App Setup ──────────────────────────────────────────────────────────────────
@@ -195,8 +213,108 @@ const app = createNodeApp<AppState>({
     processes: [...initialProcesses],
     todos: [...initialTodos],
     scheduled: [],
+    toolExecutions: [],
+    pendingApproval: null,
+    sessionApprovedTools: new Set<string>(),
   },
 });
+
+// ── Tool System ───────────────────────────────────────────────────────────────
+
+const toolRegistry = createDefaultRegistry();
+const pendingApprovalResolvers = new Map<string, (approved: boolean) => void>();
+const pendingApprovalToolNames = new Map<string, string>();
+let execCounter = 0;
+
+function resolveApproval(execId: string, approved: boolean, forSession = false) {
+  const resolver = pendingApprovalResolvers.get(execId);
+  if (!resolver) return;
+  pendingApprovalResolvers.delete(execId);
+
+  if (forSession) {
+    const toolName = pendingApprovalToolNames.get(execId);
+    if (toolName) {
+      app.update((prev) => {
+        const next = new Set(prev.sessionApprovedTools);
+        next.add(toolName);
+        return { ...prev, sessionApprovedTools: next };
+      });
+    }
+  }
+  pendingApprovalToolNames.delete(execId);
+
+  resolver(approved);
+}
+
+function runTool(call: ToolCall) {
+  const tool = toolRegistry.get(call.name);
+  if (!tool) return;
+
+  const execId = `exec-${Date.now()}-${++execCounter}`;
+  const execution: ToolExecution = {
+    id: execId,
+    call,
+    riskLevel: tool.riskLevel,
+    status: "pending",
+  };
+
+  // Capture session-approved tools before async work
+  let currentApproved: Set<string> | undefined;
+  app.update((prev) => {
+    currentApproved = prev.sessionApprovedTools;
+    return {
+      ...prev,
+      toolExecutions: [...prev.toolExecutions, execution],
+    };
+  });
+
+  executeToolCall(
+    toolRegistry,
+    call,
+    {
+      onToolStarted() {
+        app.update((prev) => ({
+          ...prev,
+          pendingApproval: null,
+          toolExecutions: prev.toolExecutions.map((e) =>
+            e.id === execId ? { ...e, status: "running" as const } : e,
+          ),
+        }));
+      },
+      onToolCompleted(_call, result) {
+        app.update((prev) => ({
+          ...prev,
+          toolExecutions: prev.toolExecutions.map((e) =>
+            e.id === execId
+              ? { ...e, status: "completed" as const, result }
+              : e,
+          ),
+        }));
+      },
+      async onApprovalRequired() {
+        pendingApprovalToolNames.set(execId, call.name);
+        app.update((prev) => ({
+          ...prev,
+          pendingApproval: { ...execution, status: "pending" as const },
+        }));
+        return new Promise<boolean>((resolve) => {
+          pendingApprovalResolvers.set(execId, resolve);
+        });
+      },
+    },
+    currentApproved,
+  ).then((result) => {
+    if (!result.ok && result.code === "DENIED") {
+      app.update((prev) => ({
+        ...prev,
+        pendingApproval: null,
+        toolExecutions: prev.toolExecutions.map((e) =>
+          e.id === execId ? { ...e, status: "denied" as const } : e,
+        ),
+      }));
+    }
+  });
+}
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 

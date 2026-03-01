@@ -52,6 +52,52 @@ bun run dev     # build + run in one step
 - **Tabs** - Paste Bin, Processes, To Do, Scheduled
 - **Input** - Multiline textarea with Send now / Schedule buttons
 
+## Agent Tool Roadmap
+
+Tools the AI agent can invoke, organised by implementation priority.
+
+### Tier 1 — Core (MVP)
+
+Baseline capabilities every agentic coding tool needs.
+
+- [ ] **read** — Read file contents with optional line range (offset + limit)
+- [ ] **write** — Create or overwrite a file
+- [ ] **edit** — Targeted string replacement in an existing file (old → new)
+- [ ] **ls** — List files and directories at a path
+- [ ] **glob** — Find files by name/pattern (`**/*.ts`)
+- [ ] **grep** — Search file contents by regex (ripgrep-style)
+- [ ] **bash** — Execute shell commands (timeout, background mode, kill)
+
+### Tier 2 — Essential UX
+
+What separates a useful agent from a toy demo.
+
+- [ ] **question** — Ask the user for clarification mid-task
+- [ ] **todo** — Create and manage a task checklist for multi-step work
+- [ ] **plan** — Switch between planning mode (read-only) and build mode (full access)
+- [ ] **web_search** — Search the web for current information
+- [ ] **web_fetch** — Fetch a URL, convert HTML to markdown
+
+### Tier 3 — Power Features
+
+Parallel work, efficient edits, and code intelligence.
+
+- [ ] **task** — Spawn a subagent with its own session for parallel/delegated work
+- [ ] **multiedit** — Apply multiple replacements to one file in a single call
+- [ ] **apply_patch** — Apply unified diffs (add, update, delete, move files)
+- [ ] **batch** — Execute up to N tool calls in parallel in one invocation
+- [ ] **lsp** — Language server integration (go-to-definition, references, diagnostics)
+
+### Tier 4 — Differentiators
+
+Features that set Cumulonimbus apart.
+
+- [ ] **memory** — Persist knowledge across sessions
+- [ ] **browser** — Headless browser automation (navigate, click, screenshot)
+- [ ] **semantic_search** — Embedding-based code search by meaning
+- [ ] **codesearch** — Search external docs, APIs, and library references
+- [ ] **skill** — Load domain-specific knowledge packs (SKILL.md + associated files)
+
 ## Rezi Notes
 
 Rezi (`@rezi-ui/core` + `@rezi-ui/node`) is an alpha-stage terminal UI framework for TypeScript. Key things to know when working on this codebase:
