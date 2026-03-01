@@ -1,0 +1,25 @@
+{
+  "lockfileVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "cumulonimbus",
+      "dependencies": {
+        "@rezi-ui/core": "^0.1.0-alpha.49",
+        "@rezi-ui/native": "^0.1.0-alpha.49",
+        "@rezi-ui/node": "^0.1.0-alpha.49",
+      },
+      "devDependencies": {
+        "typescript": "^5.7.0",
+      },
+    },
+  },
+  "packages": {
+    "@rezi-ui/core": ["@rezi-ui/core@0.1.0-alpha.49", "", {}, "sha512-50WKGVcecaPmD7MCwSY48mphZkggfzz4TrSK6fEbEnmpDyMn8j6L6y7Si2JWLyNNhQ26qM1til+iS/7BxzkwlA=="],
+
+    "@rezi-ui/native": ["@rezi-ui/native@0.1.0-alpha.49", "", {}, "sha512-vYDrPW7MqUkdfy9rgpSSCJ+vaEENkfXWIxPVDu9So9ysPNfFWU7juIp3WhauYRqBs+7CN48/ZIOc1fEVTQhuoQ=="],
+
+    "@rezi-ui/node": ["@rezi-ui/node@0.1.0-alpha.49", "", { "dependencies": { "@rezi-ui/core": "0.1.0-alpha.49", "@rezi-ui/native": "0.1.0-alpha.49" } }, "sha512-i76RIAP2vAmnMCa3xzDTTEyo2VcKvCmqFUd628WBJwDV42Cphz1pZJlEEVI5PfYoQBnVTFXhFQvvG5kqxVJCzQ=="],
+
+    "typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
+  }
+}

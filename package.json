@@ -1,0 +1,21 @@
+{
+  "name": "cumulonimbus",
+  "version": "0.1.0",
+  "description": "Agentic engineering tool TUI built with Rezi",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "bun run dist/index.js",
+    "dev": "tsc && bun run dist/index.js"
+  },
+  "dependencies": {
+    "@rezi-ui/core": "^0.1.0-alpha.49",
+    "@rezi-ui/node": "^0.1.0-alpha.49",
+    "@rezi-ui/native": "^0.1.0-alpha.49"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "license": "MIT"
+}
